@@ -27,20 +27,9 @@ use Cwd qw(cwd);
 use Data::Dumper;
 
 
-#  Constants
-#
-use constant {
-
-    #  Output to stdout
-    #
-    OUTFILE => '-'
-
-};
-
-
 #  Version Info, must be all one line for MakeMaker, CPAN.
 #
-$VERSION='0.001';
+$VERSION='0.002';
 
 
 #  Run main routine
@@ -70,7 +59,6 @@ sub getopt {
 
     #  Get command line options
     #
-    #Getopt::Long::Configure(qw(auto_help auto_version));
     GetOptions(
         \%opt,
         'help|?',
