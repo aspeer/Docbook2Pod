@@ -1,0 +1,10 @@
+MANIFEST
+Makefile.PL
+bin/docbook2pod
+lib/Docbook2Pod.pm
+lib/Docbook2Pod/Util.pm
+lib/Docbook2Pod/Constant.pm
+t/00-load.t
+LICENSE
+INSTALL
+README

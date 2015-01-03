@@ -1,0 +1,245 @@
+#!/bin/env perl
+#
+#  Convert Docbook files to POD
+#
+
+
+#  Pragma
+#
+use strict qw(vars);
+use vars qw($VERSION $Debug);
+
+
+#  External modules
+#
+use IO::File;
+use Docbook2Pod;
+use Docbook2Pod::Util;
+use Docbook2Pod::Constant;;
+use Getopt::Long;
+use Pod::Usage;
+use FindBin qw($RealBin $Script);
+use Cwd qw(cwd);
+
+
+#  Used for debugging only
+#
+use Data::Dumper;
+
+
+#  Constants
+#
+use constant {
+
+    #  Output to stdout
+    #
+    OUTFILE => '-'
+
+};
+
+
+#  Version Info, must be all one line for MakeMaker, CPAN.
+#
+$VERSION='0.001';
+
+
+#  Run main routine
+#
+exit ${&main(\@ARGV) || die 'unknown error'};
+
+
+#===================================================================================================
+
+sub getopt {
+
+
+    #  Parse options and dispatch to actual work routine below
+    #
+    my $argv_ar=shift();
+
+
+    #  Defaul options
+    #
+    my %opt=(
+
+        xmlsuffix       =>   $OPT_XMLSUFFIX,
+        podsuffix       =>   $OPT_PODSUFFIX,
+
+    );
+
+
+    #  Get command line options
+    #
+    #Getopt::Long::Configure(qw(auto_help auto_version));
+    GetOptions(
+        \%opt,
+        'help|?',
+        'man',
+        'version',
+        'debug',
+        'xsltproc_exe=s',
+        'groff_exe=s',
+        'rman_exe=s',
+        'xlstproc_xsl=s',
+        'outfile|o=s',
+        'infile=s@',
+        'recurse|r',
+        'recursedir|d=s',
+        'xmlsuffix|x=s',
+        'podsuffix|p=s',
+        'merge',
+    ) || pod2usage(2);
+    pod2usage(-verbose => 99, -sections => 'Synopsis|Options', -exitval => 1) if $opt{'help'};
+    pod2usage(-verbose => 2) if $opt{'man'};
+    $opt{'version'} && do {
+        print "$Script version: $VERSION\n";
+        exit 0
+    };
+
+
+    #  Get infile
+    #
+    unless (@{$opt{'infile'}}) {
+        $opt{'infile'}=$argv_ar
+    }
+    
+    
+    #  Update Constants if needed
+    #
+    foreach my $constant (qw(
+        xsltproc_exe
+        xlstproc_xsl
+        groff_exe
+        rman_exe
+    )) {
+        ${uc($constant)}=$opt{$constant} if defined $opt{$constant};
+    }
+    foreach my $constant (qw(
+        xmlsuffx
+        podsuffix
+    )) {
+        ${'OPT_'.uc($constant)}=$opt{$constant} if defined $opt{$constant};
+    }
+    
+    
+    # Recursing ?
+    #
+    if (exists $opt{'recurse'} || $opt{'recursedir'}) {
+        my $dn=$opt{'recursedir'} || cwd();
+        my @fn;
+        my $wanted_cr=sub {
+            return unless -f (my $fn=$File::Find::name);
+            push @fn, $fn if ($fn=~/\Q$opt{'xmlsuffix'}\E$/);
+        };
+        use File::Find;
+        find($wanted_cr, $dn);
+        @fn ||
+            return err("no files with '%s' suffix found when recursing directory '$dn'", $opt{'xmlsuffix'});
+        @ARGV=@fn;
+    }
+
+
+    #  Return option hash ref
+    #
+    debug('opt %s', Dumper(\%opt)) if ($Debug=$opt{'debug'});
+
+
+    #  Done
+    #
+    return \%opt;
+
+}
+
+
+sub main {
+
+
+    #  Get options
+    #
+    my $opt_hr=&getopt(shift());
+    
+    
+    #  Get input files
+    #
+    my @in_fn=@{$opt_hr->{'infile'}};
+    
+    
+    #  Prepare to slurp
+    #
+    local $/=undef;
+    while (my $xml=<>) {
+    
+    
+        #  Get the name of the docbook file we are currently slurping
+        #
+        my $in_fn=shift @in_fn;
+        
+        
+        #  Extract POD from docbook
+        #
+        my $pod_sr=Docbook2Pod->docbook2pod_xml(\$xml);
+        
+        
+        #  Where are we going to put it
+        #
+        my $out_fn=$opt_hr->{'outfile'};
+        if ($out_fn=~/^\.(.*)$/ && ($in_fn ne '-')) {
+        
+            #  Output file option is something like '.foo' = add '.foo' to input file name
+            #  and make that the output file name
+            #
+            my $suffix=$out_fn;
+            $out_fn=$in_fn;
+            
+            #  As a nicety strip known suffix off input file before saving (e.g. text.xml becomes
+            #  text.foo, not text.xml.foo
+            #
+            $out_fn=~s/\Q$opt_hr->{'xmlsuffix'}\E$//;
+            $out_fn.=$suffix;
+            
+            
+            #  Lastly if no input file just a suffix doesn't make sense so delete
+            #
+            $out_fn=undef unless $in_fn;
+            
+        }
+        if ($out_fn) {
+        
+        
+            #  If we have an output file now save it there
+            #
+            my $out_fh=IO::File->new($out_fn, O_WRONLY|O_TRUNC|O_CREAT) ||
+                return err("unable to open output file '$out_fn' for write, $!");
+            print $out_fh ${$pod_sr};
+            $out_fh->close()
+        }
+        elsif ($opt_hr->{'merge'}) {
+        
+        
+            #  Or we are merging it into an existing (presumably perl) file. Strip suffix from
+            #  input file and look for identically named file (e.g. if input file is foo.pl.xml
+            #  look for foo.pl)
+            #
+            $out_fn=$in_fn;
+            $out_fn=~s/\Q$opt_hr->{'xmlsuffix'}\E$//;
+            unless (-f $out_fn) {
+                return err("can't merge into file '$out_fn', file does not exist");
+            }
+            Docbook2Pod->pod_replace($out_fn, $pod_sr);
+        }
+        else {
+        
+
+            #   None the above. Send to stdout
+            #
+            print ${$pod_sr};
+
+        }    
+    }
+    
+    
+    #  All done
+    #
+    return \0;
+    
+}

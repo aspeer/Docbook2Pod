@@ -1,0 +1,13 @@
+ChangeLog
+Changes
+Makefile
+Makefile.old
+MYMETA.json
+MYMETA.yml
+META.yml
+META.json
+blib/*
+pm_to_blib
+*.bak
+*.old
+Docbook2Pod-*
