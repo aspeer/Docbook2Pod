@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<refentry>
+  <refmeta>
+    <refentrytitle>docbook2pod</refentrytitle>
+
+    <manvolnum>1</manvolnum>
+  </refmeta>
+
+  <refnamediv>
+    <refname>docbook2pod</refname>
+
+    <refpurpose>convert Docbook XML files into POD text</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>docbook2pod [OPTIONS] FILE|-</command>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsection>
+    <title>Options</title>
+
+    <para><variablelist>
+        <varlistentry>
+          <term>-h, -?, --help</term>
+
+          <listitem>
+            <para>Show brief help message.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>-m, --man</term>
+
+          <listitem>
+            <para>Show this manual page</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>-v, --version</term>
+
+          <listitem>
+            <para>Show the utility and module version</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>-d, --debug</term>
+
+          <listitem>
+            <para>Turn on debugging output</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>-o, --outfile</term>
+
+          <listitem>
+            <para>Output filename or output suffix to append if multiple input
+            files</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>-r, --recurse</term>
+
+          <listitem>
+            <para>Recurse down current directory looking for files matching
+            docbook suffix and proccess</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>-d, --recursedir</term>
+
+          <listitem>
+            <para>Recurse down specified directory looking for files matching
+            docbook suffix and process</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>-m, --merge</term>
+
+          <listitem>
+            <para>Merge produced POD into source file with same name minus
+            docbook suffix. All existing POD will be stripped from the target
+            file.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>--xsltproc_exe</term>
+
+          <listitem>
+            <para>Location of xsltproc binary</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>--xsltproc_xsl</term>
+
+          <listitem>
+            <para>Location of xlstproc stylesheets for converting docbook to
+            man pages</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>--groff_exe</term>
+
+          <listitem>
+            <para>Location of the groff binary</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>--rman_exe</term>
+
+          <listitem>
+            <para>Location of the polyglot rman binary</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>--xmlsuffix</term>
+
+          <listitem>
+            <para>Suffix of docbook files. Defaults to .xml</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>--podsuffix</term>
+
+          <listitem>
+            <para>Suffix of pod files. Defaults to .pod</para>
+          </listitem>
+        </varlistentry>
+      </variablelist></para>
+
+    <para/>
+  </refsection>
+
+  <refsection>
+    <title>Description</title>
+
+    <para>The <command>docbook2pod</command> command is a wrapper around the
+    following pseudo-code pipe</para>
+
+    <para>xlstproc | groff | rman</para>
+
+    <para>with appropriate options to convert a Docbook article into a Perl
+    POD file. It can optionally merge the resulting POD file into an existing
+    Perl document (e.g. .pl or .pm).</para>
+  </refsection>
+
+  <refsection>
+    <title>Notes</title>
+
+    <para>The <command>docbook2pod</command> command use the Docbook2Pod Perl
+    module. The Docbook2Pod Perl module assumes all binaries and stylesheets
+    required are installed on the system and in well-known locations.</para>
+
+    <para>If the Docbook2Pod module cannot fine the binaries or stylesheets
+    needed you can supply locations via the options.</para>
+  </refsection>
+
+  <refsection>
+    <title>Examples</title>
+
+    <para><command>docbook2pod foo.xml</command></para>
+
+    <para>Display the POD generated from the foo.xml docbook source .</para>
+
+    <para><command>docbook2pod -m foo.pl.xml</command></para>
+  </refsection>
+
+  <refsection>
+    <title>Author</title>
+
+    <para>Written by Andrew Speer,
+    <email>andrew.speer@isolutions.com.au</email></para>
+  </refsection>
+
+  <refsection>
+    <title>Copying</title>
+
+    <para>This file is part of Docbook2Pod.</para>
+
+    <para>This software is copyright (c) 2015 by Andrew Speer
+    &lt;andrew.speer@isolutions.com.au&gt;. </para>
+
+    <para>This is free software; you can redistribute it and/or modify it
+    under the same terms as the Perl 5 programming language system
+    itself.</para>
+
+    <para>Full license text is available at: </para>
+
+    <para>&lt;http://dev.perl.org/licenses/&gt; </para>
+  </refsection>
+</refentry>

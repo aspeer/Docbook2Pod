@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<refentry>
+  <refmeta>
+    <refentrytitle>Docbook2Pod</refentrytitle>
+
+    <manvolnum>3</manvolnum>
+  </refmeta>
+
+  <refnamediv>
+    <refname>Docbook2Pod</refname>
+
+    <refpurpose>Convert Docbook to POD using xsltproc, groff and polyglot rman
+    utilities</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <programlisting>use Docbook2Pod
+
+my $pod_sr=Docbook2Pod-&gt;docbook2pod_xml(\$docbook_xml);
+
+print ${$pod_sr}
+
+...
+
+my $fn=Docbook2Pod-&gt;pod_replace('some_file_name', $pod_sr);
+</programlisting>
+  </refsynopsisdiv>
+
+  <refsection>
+    <title>Description</title>
+
+    <para>This module provides methods to convert Docbook XML to POD and to
+    merge that POD into a Perl document.</para>
+  </refsection>
+
+  <refsection>
+    <title>Background</title>
+
+    <para>This modules allows module documentation to be written as Docbook
+    refentry articles and then converted to POD - and optionally merged into
+    the module they are documenting. This allows for the use of Docbook
+    editors to maintain documentation as separate entities if desired.</para>
+  </refsection>
+
+  <refsection>
+    <title>Author</title>
+
+    <para>Written by Andrew Speer,
+    <email>andrew.speer@isolutions.com.au</email></para>
+  </refsection>
+
+  <refsection>
+    <title>Copying</title>
+
+    <para>This file is part of Docbook2Pod.</para>
+
+    <para>This software is copyright (c) 2015 by Andrew Speer
+    &lt;andrew.speer@isolutions.com.au&gt;.</para>
+
+    <para>This is free software; you can redistribute it and/or modify it
+    under the same terms as the Perl 5 programming language system
+    itself.</para>
+
+    <para>Full license text is available at:</para>
+
+    <para>&lt;http://dev.perl.org/licenses/&gt;</para>
+  </refsection>
+</refentry>

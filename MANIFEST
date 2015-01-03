@@ -1,10 +1,16 @@
 MANIFEST
 Makefile.PL
 bin/docbook2pod
+bin/docbook2pod.xml
 lib/Docbook2Pod.pm
+lib/Docbook2Pod.pm.xml
 lib/Docbook2Pod/Util.pm
 lib/Docbook2Pod/Constant.pm
 t/00-load.t
 LICENSE
 INSTALL
 README
+README.md
+README.xml
+
+

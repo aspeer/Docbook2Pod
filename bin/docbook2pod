@@ -243,3 +243,176 @@ sub main {
     return \0;
     
 }
+__END__
+=head1 Name
+
+docbook2pod - convert Docbook XML files into POD text
+
+=head1 B<Synopsis>
+
+B<docbook2pod [OPTIONS] FILE|->
+
+=head1 B<Options>
+
+-h, -?, --help
+Show brief help message.
+
+
+=over 5
+
+
+=item -m, --man
+
+
+
+
+Show this manual page
+
+
+=item -v, --version
+
+
+
+
+Show the utility and module version
+
+
+=item -d, --debug
+
+
+
+
+Turn on debugging output
+
+
+=item -o, --outfile
+
+
+
+
+Output filename or output suffix to append if multiple input files
+
+
+=item -r, --recurse
+
+
+
+
+Recurse down current directory looking for files matching docbook
+suffix and proccess
+
+
+=item -d, --recursedir
+
+
+
+
+Recurse down specified directory looking for files matching docbook
+suffix and process
+
+
+=item -m, --merge
+
+
+
+
+Merge produced POD into source file with same name minus docbook
+suffix. All existing POD will be stripped from the target file.
+
+
+=item --xsltproc_exe
+
+
+
+
+Location of xsltproc binary
+
+
+=item --xsltproc_xsl
+
+
+
+
+Location of xlstproc stylesheets for converting docbook to man
+pages
+
+
+=item --groff_exe
+
+
+
+
+Location of the groff binary
+
+
+=item --rman_exe
+
+
+
+
+Location of the polyglot rman binary
+
+
+=item --xmlsuffix
+
+
+
+
+Suffix of docbook files. Defaults to .xml
+
+
+=item --podsuffix
+
+
+
+
+Suffix of pod files. Defaults to .pod
+
+=back
+
+
+=head1 B<Description>
+
+The B<docbook2pod >command is a wrapper around the following pseudo-code
+pipe
+
+xlstproc | groff | rman
+
+with appropriate options to convert a Docbook article into a Perl POD
+file. It can optionally merge the resulting POD file into an existing
+Perl document (e.g. .pl or .pm).
+
+=head1 B<Notes>
+
+The B<docbook2pod >command use the Docbook2Pod Perl module. The
+Docbook2Pod Perl module assumes all binaries and stylesheets required
+are installed on the system and in well-known locations.
+
+If the Docbook2Pod module cannot fine the binaries or stylesheets
+needed you can supply locations via the options.
+
+=head1 B<Examples>
+
+B<docbook2pod foo.xml>
+
+Display the POD generated from the foo.xml docbook source .
+
+B<docbook2pod -m foo.pl.xml>
+
+=head1 B<Author>
+
+Written by Andrew Speer, <andrew.speer@isolutions.com.au>
+
+=head1 B<Copying>
+
+This file is part of Docbook2Pod.
+
+This software is copyright (c) 2015 by Andrew Speer
+<andrew.speer@isolutions.com.au>.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+Full license text is available at:
+
+<http://dev.perl.org/licenses/>

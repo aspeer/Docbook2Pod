@@ -181,4 +181,61 @@ sub pod_replace {
 
 __END__
 
+=head1 Name
 
+Docbook2Pod - Convert Docbook to POD using xsltproc, groff and polyglot
+rman utilities
+
+=head1 B<Synopsis>
+
+use Docbook2Pod
+
+my $pod_sr=Docbook2Pod->docbook2pod_xml(\$docbook_xml);
+
+print ${$pod_sr}
+
+
+=over 5
+
+
+=item ...
+
+
+
+
+
+
+=back
+
+my $fn=Docbook2Pod->pod_replace('some_file_name', $pod_sr);
+
+=head1 B<Description>
+
+This module provides methods to convert Docbook XML to POD and to merge
+that POD into a Perl document.
+
+=head1 B<Background>
+
+This modules allows module documentation to be written as Docbook
+refentry articles and then converted to POD - and optionally merged
+into the module they are documenting. This allows for the use of
+Docbook editors to maintain documentation as separate entities if
+desired.
+
+=head1 B<Author>
+
+Written by Andrew Speer, <andrew.speer@isolutions.com.au>
+
+=head1 B<Copying>
+
+This file is part of Docbook2Pod.
+
+This software is copyright (c) 2015 by Andrew Speer
+<andrew.speer@isolutions.com.au>.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+Full license text is available at:
+
+<http://dev.perl.org/licenses/>
