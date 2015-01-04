@@ -1,8 +1,8 @@
-# Name
+=head1 Name
 
 Docbook2Pod - Convert Docbook XML to Pod
 
-# **Description**
+=head1 B<Description>
 
 You can install this in the usual Perl fashion:
 
