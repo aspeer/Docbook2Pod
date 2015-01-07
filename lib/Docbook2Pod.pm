@@ -57,7 +57,7 @@ $Data::Dumper::Terse=1;
 #  Version information in a format suitable for CPAN etc. Must be
 #  all on one line
 #
-$VERSION='0.003';
+$VERSION='0.004';
 
 
 #  All done, init finished
