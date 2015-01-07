@@ -20,32 +20,36 @@
     <pubdate>07 January 2015</pubdate>
   </info>
 
-
   <section>
     <title>Docbook2Pod</title>
-    <para>Docbook2Pod -- convert Docbook XML files into POD using Pandoc and Markdown::Pod</para>
+
+    <para>Docbook2Pod -- convert Docbook XML files into POD using Pandoc and
+    Markdown::Pod</para>
   </section>
 
   <section>
     <title>Synopsis</title>
-      <para><programlisting>use Docbook2Pod
 
+    <para><programlisting>#  From command line
+#
+docbook2pod foo.xml
+
+
+#  From Perl script
+#
+use Docbook2Pod;
 my $pod_sr=Docbook2Pod-&gt;docbook2pod_xml(\$docbook_xml);
-
 print ${$pod_sr}
-
 ...
-
 my $fn=Docbook2Pod-&gt;pod_replace('some_file_name', $pod_sr);
 </programlisting></para>
   </section>
-
 
   <section>
     <title>Description</title>
 
     <para>This module provides methods to convert Docbook XML to POD, and to
-    merge that POD into a Perl document.</para>
+    merge POD into a Perl document.</para>
   </section>
 
   <section>
@@ -53,8 +57,8 @@ my $fn=Docbook2Pod-&gt;pod_replace('some_file_name', $pod_sr);
 
     <para>This modules allows module documentation to be written as Docbook
     article and then converted to POD - and optionally merged into the module
-    they are documenting. This allows for the use of Docbook editors to
-    maintain documentation as separate entities if desired.</para>
+    being documented. This allows for the use of Docbook editors to maintain
+    documentation as separate entities if desired.</para>
   </section>
 
   <section>

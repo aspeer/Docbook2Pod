@@ -240,17 +240,7 @@ sub main {
     return \0;
     
 }
-__END__docbook2pod
-1
-docbook2pod
-convert Docbook XML files into POD text
-docbook2pod [OPTIONS] FILE|-
-
-
 __END__
-
-
-
 =head1 docbook2pod
 
 docbook2pod -- convert Docbook XML files into POD text
@@ -258,10 +248,8 @@ docbook2pod -- convert Docbook XML files into POD text
 
 =head1 Synopsis
 
-  +-----------------------------+----+
-  | `docbook2pod [OPTIONS] FILE | -` |
-  |                             |    |
-  +-----------------------------+----+
+C<<< docbook2pod [OPTIONS] FILE >>>
+
 
 =head1 Options
 
@@ -314,11 +302,10 @@ Suffix of pod files. Defaults to .pod
 
 The C<<< docbook2pod >>> command is a wrapper around the following pseudo-code pipe
 
-  +-----------------------------+--------------+
-  | `docbook2pod [OPTIONS] FILE | -`           |
-  | pandoc                      | markdown2pod |
-  |                             |              |
-  +-----------------------------+--------------+
+  +--------+--------------+
+  | pandoc | markdown2pod |
+  |        |              |
+  +--------+--------------+
 with appropriate options to convert a Docbook article into a Perl POD file. It can optionally merge the resulting POD file into an existing Perl document (e.g. .pl or .pm).
 
 

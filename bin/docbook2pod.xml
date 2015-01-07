@@ -20,15 +20,16 @@
     <pubdate>07 January 2015</pubdate>
   </info>
 
-
   <section>
     <title>docbook2pod</title>
+
     <para>docbook2pod -- convert Docbook XML files into POD text</para>
   </section>
 
   <section>
     <title>Synopsis</title>
-      <para><command>docbook2pod [OPTIONS] FILE|-</command></para>
+
+    <para><command>docbook2pod [OPTIONS] FILE</command></para>
   </section>
 
   <section>
