@@ -7,29 +7,32 @@ Markdown::Pod
 Synopsis
 ========
 
-    use Docbook2Pod
+    #  From command line
+    #
+    docbook2pod foo.xml
 
+
+    #  From Perl script
+    #
+    use Docbook2Pod;
     my $pod_sr=Docbook2Pod->docbook2pod_xml(\$docbook_xml);
-
     print ${$pod_sr}
-
     ...
-
     my $fn=Docbook2Pod->pod_replace('some_file_name', $pod_sr);
 
 Description
 ===========
 
 This module provides methods to convert Docbook XML to POD, and to merge
-that POD into a Perl document.
+POD into a Perl document.
 
 Background
 ==========
 
 This modules allows module documentation to be written as Docbook
 article and then converted to POD - and optionally merged into the
-module they are documenting. This allows for the use of Docbook editors
-to maintain documentation as separate entities if desired.
+module being documented. This allows for the use of Docbook editors to
+maintain documentation as separate entities if desired.
 
 Author
 ======
