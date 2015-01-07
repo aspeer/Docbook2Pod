@@ -1,8 +1,52 @@
-Name
-    Docbook2Pod - Convert Docbook XML to Pod
+Docbook2Pod
+===========
+
+Docbook2Pod -- convert Docbook XML files into POD using Pandoc and
+Markdown::Pod
+
+Synopsis
+========
+
+    use Docbook2Pod
+
+    my $pod_sr=Docbook2Pod->docbook2pod_xml(\$docbook_xml);
+
+    print ${$pod_sr}
+
+    ...
+
+    my $fn=Docbook2Pod->pod_replace('some_file_name', $pod_sr);
 
 Description
-    You can install this in the usual Perl fashion:
+===========
 
-    perl Makefile.PL make make test make install
+This module provides methods to convert Docbook XML to POD, and to merge
+that POD into a Perl document.
 
+Background
+==========
+
+This modules allows module documentation to be written as Docbook
+article and then converted to POD - and optionally merged into the
+module they are documenting. This allows for the use of Docbook editors
+to maintain documentation as separate entities if desired.
+
+Author
+======
+
+Written by Andrew Speer, andrew.speer@isolutions.com.au
+
+Copying
+=======
+
+This file is part of Docbook2Pod.
+
+This software is copyright (c) 2015 by Andrew Speer
+<andrew.speer@isolutions.com.au>.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+Full license text is available at:
+
+<http://dev.perl.org/licenses/>

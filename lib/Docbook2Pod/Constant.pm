@@ -119,38 +119,23 @@ sub fn_stylesheet_find {
 #  <<<
 %Constant=(
 
-    XSLTPROC_EXE        => &bin_find(qw(xsltproc xsltproc.exe)), 
+    PANDOC_EXE          => &bin_find(qw(pandoc pandoc.exe)),
 
-    GROFF_EXE           => &bin_find(qw(groff groff.exe)), 
-
-    RMAN_EXE            => &bin_find(qw(rman rman.exe)),
+    PANDOC_CMD_CR       => sub {return [
+        shift(),                        # PANDOC_EXE
+        '-fdocbook',                    # from docbook
+        '-tmarkdown_github',            # to markdown (github dialect)
+        shift(),                        # File name
+    ]},
         
-    XSLTPROC_XSL        => &fn_stylesheet_find('/usr/share/sgml/docbook/'),
-        
-    XSLTPROC_CMD_CR     => sub {return [
-        shift(),        # XSTLTPROC_EXE
-        '-o',           # Output to temp dir
-        shift(),        # Temp dn
-        shift(),        # XSLTPROC_XSL
-        shift(),        # File name
-    ]},
 
-    GROFF_CMD_CR        => sub {return [
-        shift(),        # GROFF_EXE
-        '-e',
-        '-mandoc',
-        '-Tascii',
-        shift(),
-    ]},
-
-    RMAN_CMD_CR         => sub {return [
-        shift(),        # RMAN_EXE
-        '-fpod',
-    ]},
-    
-    
     OPT_XMLSUFFIX       => '.xml',
     OPT_PODSUFFIX       => '.pod', 
+    
+    
+    #  Dialect one of Standard, Github, Theory
+    #
+    MARKDOWN_DIALECT    => 'Theory',
 
 
     #  Local constants override anything above

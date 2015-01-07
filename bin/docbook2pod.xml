@@ -1,26 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
-"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<refentry>
-  <refmeta>
-    <refentrytitle>docbook2pod</refentrytitle>
+<article version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <info>
+    <title>docbook2pod</title>
 
-    <manvolnum>1</manvolnum>
-  </refmeta>
+    <author>
+      <personname><firstname>Andrew</firstname><surname>Speer</surname></personname>
 
-  <refnamediv>
-    <refname>docbook2pod</refname>
+      <affiliation>
+        <orgname>andrew.speer@isolutions.com.au</orgname>
+      </affiliation>
+    </author>
 
-    <refpurpose>convert Docbook XML files into POD text</refpurpose>
-  </refnamediv>
+    <pubdate>07 January 2015</pubdate>
+  </info>
 
-  <refsynopsisdiv>
-    <cmdsynopsis>
-      <command>docbook2pod [OPTIONS] FILE|-</command>
-    </cmdsynopsis>
-  </refsynopsisdiv>
 
-  <refsection>
+  <section>
+    <title>docbook2pod</title>
+    <para>docbook2pod -- convert Docbook XML files into POD text</para>
+  </section>
+
+  <section>
+    <title>Synopsis</title>
+      <para><command>docbook2pod [OPTIONS] FILE|-</command></para>
+  </section>
+
+  <section>
     <title>Options</title>
 
     <para><variablelist>
@@ -94,35 +105,10 @@
         </varlistentry>
 
         <varlistentry>
-          <term>--xsltproc_exe</term>
+          <term>--pandoc_exe</term>
 
           <listitem>
-            <para>Location of xsltproc binary</para>
-          </listitem>
-        </varlistentry>
-
-        <varlistentry>
-          <term>--xsltproc_xsl</term>
-
-          <listitem>
-            <para>Location of xlstproc stylesheets for converting docbook to
-            man pages</para>
-          </listitem>
-        </varlistentry>
-
-        <varlistentry>
-          <term>--groff_exe</term>
-
-          <listitem>
-            <para>Location of the groff binary</para>
-          </listitem>
-        </varlistentry>
-
-        <varlistentry>
-          <term>--rman_exe</term>
-
-          <listitem>
-            <para>Location of the polyglot rman binary</para>
+            <para>Location of the pandoc binary</para>
           </listitem>
         </varlistentry>
 
@@ -144,33 +130,33 @@
       </variablelist></para>
 
     <para/>
-  </refsection>
+  </section>
 
-  <refsection>
+  <section>
     <title>Description</title>
 
     <para>The <command>docbook2pod</command> command is a wrapper around the
     following pseudo-code pipe</para>
 
-    <para>xlstproc | groff | rman</para>
+    <para>pandoc | markdown2pod</para>
 
     <para>with appropriate options to convert a Docbook article into a Perl
     POD file. It can optionally merge the resulting POD file into an existing
     Perl document (e.g. .pl or .pm).</para>
-  </refsection>
+  </section>
 
-  <refsection>
+  <section>
     <title>Notes</title>
 
-    <para>The <command>docbook2pod</command> command use the Docbook2Pod Perl
-    module. The Docbook2Pod Perl module assumes all binaries and stylesheets
-    required are installed on the system and in well-known locations.</para>
+    <para>The <command>docbook2pod</command> command uses the Docbook2Pod Perl
+    module. The Docbook2Pod Perl module assumes all binaries supporting
+    modules are installed on the system and in well-known locations.</para>
 
-    <para>If the Docbook2Pod module cannot fine the binaries or stylesheets
-    needed you can supply locations via the options.</para>
-  </refsection>
+    <para>If the Docbook2Pod module cannot fine the binaries can supply
+    locations via the options.</para>
+  </section>
 
-  <refsection>
+  <section>
     <title>Examples</title>
 
     <para><command>docbook2pod foo.xml</command></para>
@@ -178,29 +164,29 @@
     <para>Display the POD generated from the foo.xml docbook source .</para>
 
     <para><command>docbook2pod -m foo.pl.xml</command></para>
-  </refsection>
+  </section>
 
-  <refsection>
+  <section>
     <title>Author</title>
 
     <para>Written by Andrew Speer,
     <email>andrew.speer@isolutions.com.au</email></para>
-  </refsection>
+  </section>
 
-  <refsection>
+  <section>
     <title>Copying</title>
 
     <para>This file is part of Docbook2Pod.</para>
 
     <para>This software is copyright (c) 2015 by Andrew Speer
-    &lt;andrew.speer@isolutions.com.au&gt;. </para>
+    &lt;andrew.speer@isolutions.com.au&gt;.</para>
 
     <para>This is free software; you can redistribute it and/or modify it
     under the same terms as the Perl 5 programming language system
     itself.</para>
 
-    <para>Full license text is available at: </para>
+    <para>Full license text is available at:</para>
 
-    <para>&lt;http://dev.perl.org/licenses/&gt; </para>
-  </refsection>
-</refentry>
+    <para>&lt;http://dev.perl.org/licenses/&gt;</para>
+  </section>
+</article>

@@ -1,6 +1,15 @@
 #!/bin/env perl
+
+#  This file is part of Docbook2Pod.
 #
-#  Convert Docbook files to POD
+#  This software is copyright (c) 2015 by Andrew Speer <andrew.speer@isolutions.com.au>.
+#
+#  This is free software; you can redistribute it and/or modify it under
+#  the same terms as the Perl 5 programming language system itself.
+#
+#  Full license text is available at:
+#
+#  <http://dev.perl.org/licenses/>
 #
 
 
@@ -65,10 +74,8 @@ sub getopt {
         'man',
         'version',
         'debug',
-        'xsltproc_exe=s',
-        'groff_exe=s',
-        'rman_exe=s',
-        'xlstproc_xsl=s',
+        'verbose',
+        'pandoc_exe=s',
         'outfile|o=s',
         'infile=s@',
         'recurse|r',
@@ -77,7 +84,7 @@ sub getopt {
         'podsuffix|p=s',
         'merge',
     ) || pod2usage(2);
-    pod2usage(-verbose => 99, -sections => 'Synopsis|Options', -exitval => 1) if $opt{'help'};
+    pod2usage(-verbose => 99, -sections => 'B<Synopsis>|B<Options>', -exitval => 1) if $opt{'help'};
     pod2usage(-verbose => 2) if $opt{'man'};
     $opt{'version'} && do {
         print "$Script version: $VERSION\n";
@@ -117,6 +124,7 @@ sub getopt {
         my @fn;
         my $wanted_cr=sub {
             return unless -f (my $fn=$File::Find::name);
+            return if $fn=~/\/\._/; #  Mac temp file
             push @fn, $fn if ($fn=~/\Q$opt{'xmlsuffix'}\E$/);
         };
         use File::Find;
@@ -161,6 +169,7 @@ sub main {
         #  Get the name of the docbook file we are currently slurping
         #
         my $in_fn=shift @in_fn;
+        msg("processing $in_fn") if $opt_hr->{'verbose'};
         
         
         #  Extract POD from docbook
@@ -231,175 +240,116 @@ sub main {
     return \0;
     
 }
+__END__docbook2pod
+1
+docbook2pod
+convert Docbook XML files into POD text
+docbook2pod [OPTIONS] FILE|-
+
+
 __END__
-=head1 Name
 
-docbook2pod - convert Docbook XML files into POD text
 
-=head1 B<Synopsis>
 
-B<docbook2pod [OPTIONS] FILE|->
+=head1 docbook2pod
 
-=head1 B<Options>
+docbook2pod -- convert Docbook XML files into POD text
+
+
+=head1 Synopsis
+
+  +-----------------------------+----+
+  | `docbook2pod [OPTIONS] FILE | -` |
+  |                             |    |
+  +-----------------------------+----+
+
+=head1 Options
 
 -h, -?, --help
+
 Show brief help message.
 
-
-=over 5
-
-
-=item -m, --man
-
-
-
+-m, --man
 
 Show this manual page
 
-
-=item -v, --version
-
-
-
+-v, --version
 
 Show the utility and module version
 
-
-=item -d, --debug
-
-
-
+-d, --debug
 
 Turn on debugging output
 
-
-=item -o, --outfile
-
-
-
+-o, --outfile
 
 Output filename or output suffix to append if multiple input files
 
+-r, --recurse
 
-=item -r, --recurse
+Recurse down current directory looking for files matching docbook suffix and proccess
 
+-d, --recursedir
 
+Recurse down specified directory looking for files matching docbook suffix and process
 
+-m, --merge
 
-Recurse down current directory looking for files matching docbook
-suffix and proccess
+Merge produced POD into source file with same name minus docbook suffix. All existing POD will be stripped from the target file.
 
+--pandoc_exe
 
-=item -d, --recursedir
+Location of the pandoc binary
 
-
-
-
-Recurse down specified directory looking for files matching docbook
-suffix and process
-
-
-=item -m, --merge
-
-
-
-
-Merge produced POD into source file with same name minus docbook
-suffix. All existing POD will be stripped from the target file.
-
-
-=item --xsltproc_exe
-
-
-
-
-Location of xsltproc binary
-
-
-=item --xsltproc_xsl
-
-
-
-
-Location of xlstproc stylesheets for converting docbook to man
-pages
-
-
-=item --groff_exe
-
-
-
-
-Location of the groff binary
-
-
-=item --rman_exe
-
-
-
-
-Location of the polyglot rman binary
-
-
-=item --xmlsuffix
-
-
-
+--xmlsuffix
 
 Suffix of docbook files. Defaults to .xml
 
-
-=item --podsuffix
-
-
-
+--podsuffix
 
 Suffix of pod files. Defaults to .pod
 
-=back
+
+=head1 Description
+
+The C<<< docbook2pod >>> command is a wrapper around the following pseudo-code pipe
+
+  +-----------------------------+--------------+
+  | `docbook2pod [OPTIONS] FILE | -`           |
+  | pandoc                      | markdown2pod |
+  |                             |              |
+  +-----------------------------+--------------+
+with appropriate options to convert a Docbook article into a Perl POD file. It can optionally merge the resulting POD file into an existing Perl document (e.g. .pl or .pm).
 
 
-=head1 B<Description>
+=head1 Notes
 
-The B<docbook2pod >command is a wrapper around the following pseudo-code
-pipe
+The C<<< docbook2pod >>> command uses the Docbook2Pod Perl module. The Docbook2Pod Perl module assumes all binaries supporting modules are installed on the system and in well-known locations.
 
-xlstproc | groff | rman
+If the Docbook2Pod module cannot fine the binaries can supply locations via the options.
 
-with appropriate options to convert a Docbook article into a Perl POD
-file. It can optionally merge the resulting POD file into an existing
-Perl document (e.g. .pl or .pm).
 
-=head1 B<Notes>
+=head1 Examples
 
-The B<docbook2pod >command use the Docbook2Pod Perl module. The
-Docbook2Pod Perl module assumes all binaries and stylesheets required
-are installed on the system and in well-known locations.
-
-If the Docbook2Pod module cannot fine the binaries or stylesheets
-needed you can supply locations via the options.
-
-=head1 B<Examples>
-
-B<docbook2pod foo.xml>
+C<<< docbook2pod foo.xml >>>
 
 Display the POD generated from the foo.xml docbook source .
 
-B<docbook2pod -m foo.pl.xml>
+C<<< docbook2pod -m foo.pl.xml >>>
 
-=head1 B<Author>
 
-Written by Andrew Speer, <andrew.speer@isolutions.com.au>
+=head1 Author
 
-=head1 B<Copying>
+Written by Andrew Speer, 
+
+
+=head1 Copying
 
 This file is part of Docbook2Pod.
 
-This software is copyright (c) 2015 by Andrew Speer
-<andrew.speer@isolutions.com.au>.
+This software is copyright (c) 2015 by Andrew Speer <andrew.speer@isolutions.com.au>.
 
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
+This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.
 
 Full license text is available at:
 

@@ -33,7 +33,9 @@ use Data::Dumper;
 use File::Temp;
 use File::Find;
 use Cwd;
-
+use IPC::Run3;
+use Markdown::Pod;
+ 
 
 #  Data Dumper formatting
 #
@@ -63,23 +65,13 @@ sub docbook2pod_xml {
     my ($self, $xml_sr)=@_;
     
     
-    #  Create temp dn
+    #  Run the Pandoc conversion to markup
     #
-    my $tmp_dn=File::Temp->newdir( CLEANUP=>1 ) ||
-        return err("unable to create new temp dir, $!");
-    eval {
-        require IPC::Run3;
-        IPC::Run3->import(qw(run3));
-        1;
-    } || return err('unable to load IPC::Run3');
-    
-    
-    #  Run the XSLT conversion to man page
-    #
+    my $markdown;
     { 
         my $command_ar=
-            $XSLTPROC_CMD_CR->($XSLTPROC_EXE, "$tmp_dn/", $XSLTPROC_XSL, '-');
-        run3($command_ar, $xml_sr, \undef, \undef) ||
+            $PANDOC_CMD_CR->($PANDOC_EXE, '-');
+        run3($command_ar, $xml_sr, \$markdown, \undef) ||
             return err('unable to run3 %s', Dumper($command_ar));
         if ((my $err=$?) >> 8) {
             return err("error $err on run3 of: %s", Dumper($command_ar));
@@ -87,46 +79,16 @@ sub docbook2pod_xml {
     }
     
     
-    #  Look for output in temp dir (xsltproc will name based on docbook content - could be anything)
+    #  Now run through Markdown::Pod
     #
-    my $man_fn;
-    my $wanted_cr=sub {
-        return unless -f $File::Find::name;
-        $man_fn=$File::Find::name;
-    };
-    find($wanted_cr, $tmp_dn);
-    $man_fn ||
-        return err('unable to find xsltproc output file');
-    
-    
-    #  Run through groff to cleanup and send output to scalar
-    #
-    my $groff;
-    { 
-        my $command_ar=
-            $GROFF_CMD_CR->($GROFF_EXE, $man_fn);
-        run3($command_ar, \undef, \$groff, \undef) ||
-            return err('unable to run3 %s', Dumper($command_ar));
-        if ((my $err=$?) >> 8) {
-            return err("error $err on run3 of: %s", Dumper($command_ar));
-        }
-    }
-    
-    
-    #  Now through rman to create final POD file
-    #
-    my $pod;
-    { 
-        my $command_ar=
-            $RMAN_CMD_CR->($RMAN_EXE);
-        run3($command_ar, \$groff, \$pod, \undef) ||
-            return err('unable to run3 %s', Dumper($command_ar));
-        if ((my $err=$?) >> 8) {
-            return err("error $err on run3 of: %s", Dumper($command_ar));
-        }
-    }
-    
-    
+    my $m2p_or=Markdown::Pod->new() ||
+        return err('unable to create new Markdown::Pod object');
+    my $pod = $m2p_or->markdown_to_pod(
+            dialect  => $MARKDOWN_DIALECT,
+            markdown => $markdown,
+    ) || return err('unable to created pod from markdown');
+
+
     #  Done
     #
     return \$pod;
@@ -163,7 +125,7 @@ sub pod_replace {
         $ppi_doc_end_or->prune('PPI::Token::Comment');
         $ppi_doc_end_or->prune('PPI::Token::Whitespace');
     }else {
-        $ppi_doc_or->add_element(PPI::Token::Separator->new('__END__'));
+        $ppi_doc_or->add_element(PPI::Token::Separator->new("__END__\n\n"));
         $ppi_doc_or->add_element(PPI::Token::Whitespace->new("\n"));
     }
     
@@ -179,62 +141,64 @@ sub pod_replace {
     
 } 
 
-__END__
+__END__Docbook2Pod
+3
+Docbook2Pod
+Convert Docbook to POD using pandoc and Markdown::POD pipeline
+    use Docbook2Pod
 
-=head1 Name
-
-Docbook2Pod - Convert Docbook to POD using xsltproc, groff and polyglot
-rman utilities
-
-=head1 B<Synopsis>
-
-use Docbook2Pod
-
-my $pod_sr=Docbook2Pod->docbook2pod_xml(\$docbook_xml);
-
-print ${$pod_sr}
-
-
-=over 5
-
-
-=item ...
+    my $pod_sr=Docbook2Pod->docbook2pod_xml(\$docbook_xml);
+    
+    print ${$pod_sr}
+    
+    ...
+    
+    my $fn=Docbook2Pod->pod_replace('some_file_name', $pod_sr);
 
 
 
 
+=head1 Docbook2Pod
+
+Docbook2Pod -- convert Docbook XML files into POD using Pandoc and Markdown::Pod
 
 
-=back
+=head1 Synopsis
 
-my $fn=Docbook2Pod->pod_replace('some_file_name', $pod_sr);
+    use Docbook2Pod
+    
+    my $pod_sr=Docbook2Pod->docbook2pod_xml(\$docbook_xml);
+    
+    print ${$pod_sr}
+    
+    ...
+    
+    my $fn=Docbook2Pod->pod_replace('some_file_name', $pod_sr);
 
-=head1 B<Description>
 
-This module provides methods to convert Docbook XML to POD and to merge
-that POD into a Perl document.
 
-=head1 B<Background>
+=head1 Description
 
-This modules allows module documentation to be written as Docbook
-refentry articles and then converted to POD - and optionally merged
-into the module they are documenting. This allows for the use of
-Docbook editors to maintain documentation as separate entities if
-desired.
+This module provides methods to convert Docbook XML to POD, and to merge that POD into a Perl document.
 
-=head1 B<Author>
 
-Written by Andrew Speer, <andrew.speer@isolutions.com.au>
+=head1 Background
 
-=head1 B<Copying>
+This modules allows module documentation to be written as Docbook article and then converted to POD - and optionally merged into the module they are documenting. This allows for the use of Docbook editors to maintain documentation as separate entities if desired.
+
+
+=head1 Author
+
+Written by Andrew Speer, 
+
+
+=head1 Copying
 
 This file is part of Docbook2Pod.
 
-This software is copyright (c) 2015 by Andrew Speer
-<andrew.speer@isolutions.com.au>.
+This software is copyright (c) 2015 by Andrew Speer <andrew.speer@isolutions.com.au>.
 
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
+This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.
 
 Full license text is available at:
 
