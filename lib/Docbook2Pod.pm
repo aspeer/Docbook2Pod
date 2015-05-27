@@ -1,14 +1,4 @@
-#  #  This file is part of ExtUtils::Git.
-#  #
-#  #  This software is copyright (c) 2015 by Andrew Speer <andrew.speer@isolutions.com.au>.
-#  #
-#  #  This is free software; you can redistribute it and/or modify it under
-#  #  the same terms as the Perl 5 programming language system itself.
-#  #
-#  #  Full license text is available at:
-#  #
-#  #  <http://dev.perl.org/licenses/>
-#  #
+#
 #  This file is part of Docbook2Pod.
 #
 #  This software is copyright (c) 2015 by Andrew Speer <andrew.speer@isolutions.com.au>.
@@ -190,14 +180,15 @@ This modules allows module documentation to be written as Docbook article and th
 Written by Andrew Speer, 
 
 
-=head1 Copying
+=head1 LICENSE and COPYRIGHT
 
 This file is part of Docbook2Pod.
 
 This software is copyright (c) 2015 by Andrew Speer <andrew.speer@isolutions.com.au>.
 
-This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 Full license text is available at:
+L<http://dev.perl.org/licenses/>
 
-<http://dev.perl.org/licenses/>

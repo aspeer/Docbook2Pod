@@ -1,122 +1,64 @@
-#  Makefile.PL
-#
-package Docbook2Pod;
-
-
-#  Compiler Pragma
-#
-use strict  qw(vars);
-
-
-#  External Modules
-#
+use 5.006;
+use strict;
 use ExtUtils::MakeMaker;
-
-
-#  Get MakeMaker version - from Test::Simple Makefile.PL
-#
 my $mm_ver = $ExtUtils::MakeMaker::VERSION;
 if ($mm_ver =~ /_/) { # dev version
     $mm_ver = eval $mm_ver;
     die $@ if $@;
 }
-
-
-#  All done, init finished
-#
-#------------------------------------------------------------------------------
-
-#  Create the Makefile
-#
-WriteMakefile(
-
-    NAME                                =>  __PACKAGE__,
-
-    VERSION_FROM                        =>  $::version_from_fn=File::Spec->catfile(
-
-        'lib',
-        split(/::/, __PACKAGE__),
-
-       ).'.pm',
-
-
-    PREREQ_PM                           =>    do { $::prereq_hr={
-
-        'Cwd'                           =>  0,
-        'Data::Dumper'                  =>  0,
-
-       }; ($ENV{'PREREQ_PM'} eq '0') ? {} : $::prereq_hr },
-
-    EXE_FILES                           =>  ['bin/docbook2pod'],
-
-    CONFIGURE                           =>  sub { {
-
-        PREREQ_PM                       =>  $::prereq_hr
-
-    } },
-
-
-    'dist'                              =>  {
-
-        COMPRESS                        =>  'gzip -9f',
-        SUFFIX                          =>  '.gz',
-
+my %WriteMakefile=(
+    NAME                => 'Docbook2Pod',
+    VERSION_FROM        => 'lib/Docbook2Pod.pm',
+    ABSTRACT_FROM       => 'lib/Docbook2Pod.pm',,
+    EXE_FILES           => [
+        'bin/docbook2pod'
+    ],
+    LICENSE             => 'perl',
+    AUTHOR              => 'Andrew Speer <andrew.speer@isolutions.com.au>',
+    MIN_PERL_VERSION	=> '5.006',
+    PREREQ_PM           =>  {
+        'Test::Simple'  =>  0.44
     },
-
-
-    'depend'                            =>  {
-        Makefile                        =>  '$(VERSION_FROM)',
-    },
-
-
-    ($] >=  5.005 ?
-         (ABSTRACT_FROM                 =>  $::version_from_fn,
-          AUTHOR                        =>  'Andrew Speer <andrew.speer@isolutions.com.au>') : ()
-        ),
-
-
-    ($mm_ver < 6.31 ? () : (
-
-        LICENSE                         =>  'perl_5',
-
-    )),
-
-
-    ($mm_ver <= 6.45 ? () : (
-
-        META_MERGE => { 
-        
-            'meta-spec'         => {
-                version         => 2
-            },
-            resources           => {
-                homepage        => 'https://github.com/aspeer/Docbook2Pod',
-                repository      => {
-                    type        => 'git',
-                    url         => 'https://github.com/aspeer/Docbook2Pod.git',
-                    web         => 'https://github.com/aspeer/Docbook2Pod'
-                }
+    META_MERGE => { 
+        'meta-spec'     => {
+            version     => 2
+        },
+        resources       => {
+            homepage    => 'https://github.com/aspeer/Docbook2Pod',
+            repository  => {
+                type    => 'git',
+                url     => 'https://github.com/aspeer/Docbook2Pod.git',
+                web     => 'https://github.com/aspeer/Docbook2Pod'
             }
         }
-    )),
-
-
-    ($mm_ver < 6.48 ? () : (
-
-        MIN_PERL_VERSION	=>  '5.006',
-
-    )),
-
-   );
-
+    },
+    'depend'            => {
+        Makefile        => '$(VERSION_FROM)',
+    },
+    'dist'		=> {
+	COMPRESS        =>  'gzip -9f',
+	SUFFIX		=>  '.gz'
+    },
+);
+my %MM_Compat=(
+    '6.31'              => [q(LICENSE)],
+    '6.46'              => [q(META_MERGE)],
+    '6.48'              => [q(MIN_PERL_VERSION)],
+    '6.52'              => [q(CONFIGURE_REQUIRES)],
+    '6.5503'            => [q(BUILD_REQUIRES)],
+    '6.64'              => [q(TEST_REQUIRES)],
+);
+while (my($mm_ver_test, $ar)=each %MM_Compat) {
+    if (version->parse($mm_ver) < version->parse($mm_ver_test)) {
+        delete @WriteMakefile{@{$ar}};
+    }
+}
+WriteMakefile(%WriteMakefile);
 package MY;
-
 sub post_initialize {
-
     #  Add license file, other support files here
     #
     my $mm_or=shift();
     $mm_or->{'PM'}{'LICENSE'}='$(INST_LIBDIR)/$(BASEEXT)/LICENSE';
     $mm_or->SUPER::post_initialize;
-
 };
