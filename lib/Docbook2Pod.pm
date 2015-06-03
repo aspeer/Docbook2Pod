@@ -83,7 +83,7 @@ sub docbook2md {
 }
 
 
-sub docbook2pod_xml {
+sub docbook2pod {
 
 
     #  Convert XML files to POD
@@ -93,30 +93,15 @@ sub docbook2pod_xml {
 
     #  Run the Pandoc conversion to markup
     #
-    my $markdown;
-    {   my $command_ar=
-            $PANDOC_CMD_DOCBOOK2MD_CR->($PANDOC_EXE, '-');
-        run3($command_ar, $xml_sr, \$markdown, \undef) ||
-            return err ('unable to run3 %s', Dumper($command_ar));
-        if ((my $err=$?) >> 8) {
-            return err ("error $err on run3 of: %s", Dumper($command_ar));
-        }
-    }
-
-
-    #  Now run through Markdown::Pod
-    #
-    my $m2p_or=Markdown::Pod->new() ||
-        return err ('unable to create new Markdown::Pod object');
-    my $pod=$m2p_or->markdown_to_pod(
-        dialect  => $MARKDOWN_DIALECT,
-        markdown => $markdown,
-    ) || return err ('unable to created pod from markdown');
+    my $md_sr=$self->docbook2md($xml_sr) ||
+        return err();
+    my $pod_sr=$self->md2pod($md_sr) ||
+        return err();
 
 
     #  Done
     #
-    return \$pod;
+    return $pod_sr;
 
 }
 
@@ -278,9 +263,8 @@ This file is part of Docbook2Pod.
 
 This software is copyright (c) 2015 by Andrew Speer <andrew.speer@isolutions.com.au>.
 
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
+This is free software; you can redistribute it and/or modify it underthe same terms as the Perl 5 programming language system itself.
 
 Full license text is available at:
-L<http://dev.perl.org/licenses/>
 
+<http://dev.perl.org/licenses/>

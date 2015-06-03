@@ -252,7 +252,7 @@ docbook2pod -- convert Docbook XML files into POD text
 
 =head1 Synopsis
 
-C<<< docbook2pod [OPTIONS] FILE >>>
+C<docbook2pod [OPTIONS] FILE>
 
 
 =head1 Options
@@ -304,7 +304,7 @@ Suffix of pod files. Defaults to .pod
 
 =head1 Description
 
-The C<<< docbook2pod >>> command is a wrapper around the following pseudo-code pipe
+The C<docbook2pod> command is a wrapper around the following pseudo-code pipe
 
   +--------+--------------+
   | pandoc | markdown2pod |
@@ -315,18 +315,18 @@ with appropriate options to convert a Docbook article into a Perl POD file. It c
 
 =head1 Notes
 
-The C<<< docbook2pod >>> command uses the Docbook2Pod Perl module. The Docbook2Pod Perl module assumes all binaries supporting modules are installed on the system and in well-known locations.
+The C<docbook2pod> command uses the Docbook2Pod Perl module. The Docbook2Pod Perl module assumes all binaries supporting modules are installed on the system and in well-known locations.
 
 If the Docbook2Pod module cannot fine the binaries can supply locations via the options.
 
 
 =head1 Examples
 
-C<<< docbook2pod foo.xml >>>
+C<docbook2pod foo.xml>
 
 Display the POD generated from the foo.xml docbook source .
 
-C<<< docbook2pod -m foo.pl.xml >>>
+C<docbook2pod -m foo.pl.xml>
 
 
 =head1 Author
@@ -340,9 +340,8 @@ This file is part of Docbook2Pod.
 
 This software is copyright (c) 2015 by Andrew Speer <andrew.speer@isolutions.com.au>.
 
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
+This is free software; you can redistribute it and/or modify it underthe same terms as the Perl 5 programming language system itself.
 
 Full license text is available at:
-L<http://dev.perl.org/licenses/>
 
+<http://dev.perl.org/licenses/>
