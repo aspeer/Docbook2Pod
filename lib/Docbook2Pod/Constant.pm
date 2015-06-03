@@ -122,16 +122,24 @@ sub fn_stylesheet_find {
 
     PANDOC_EXE          => &bin_find(qw(pandoc pandoc.exe)),
 
-    PANDOC_CMD_CR       => sub {return [
+    PANDOC_CMD_DOCBOOK2MD_CR       => sub {return [
         shift(),                        # PANDOC_EXE
         '-fdocbook',                    # from docbook
         '-tmarkdown_github',            # to markdown (github dialect)
         shift(),                        # File name
     ]},
         
+    PANDOC_CMD_MD2TEXT_CR       => sub {return [
+        shift(),                        # PANDOC_EXE
+        '-fmarkdown_github',            # from markdown (github dialect)
+        '-tplain',                      # to plaintext
+        shift(),                        # File name
+    ]},
+
 
     OPT_XMLSUFFIX       => '.xml',
     OPT_PODSUFFIX       => '.pod', 
+    OPT_MDSUFFIX        => '.md', 
     
     
     #  Dialect one of Standard, Github, Theory

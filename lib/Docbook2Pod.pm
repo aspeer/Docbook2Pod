@@ -71,7 +71,7 @@ sub docbook2pod_xml {
     my $markdown;
     { 
         my $command_ar=
-            $PANDOC_CMD_CR->($PANDOC_EXE, '-');
+            $PANDOC_CMD_DOCBOOK2MD_CR->($PANDOC_EXE, '-');
         run3($command_ar, $xml_sr, \$markdown, \undef) ||
             return err('unable to run3 %s', Dumper($command_ar));
         if ((my $err=$?) >> 8) {
@@ -96,6 +96,103 @@ sub docbook2pod_xml {
     
 }
 
+
+sub docbook2md {
+
+
+    #  Convert XML files to Markdown
+    #
+    my ($self, $xml_sr, $fn)=@_;
+    
+    
+    #  Run the Pandoc conversion to markup
+    #
+    my $markdown;
+    { 
+        my $command_ar=
+            $PANDOC_CMD_DOCBOOK2MD_CR->($PANDOC_EXE, '-');
+        run3($command_ar, $xml_sr, $fn || \$markdown, \undef) ||
+            return err('unable to run3 %s', Dumper($command_ar));
+        if ((my $err=$?) >> 8) {
+            return err("error $err on run3 of: %s", Dumper($command_ar));
+        }
+    }
+    
+    #  Done
+    #
+    return \$markdown;
+    
+}
+
+
+sub md2text {
+
+
+    #  Convert XML files to Markdown
+    #
+    my ($self, $markdown_sr, $fn)=@_;
+    
+    
+    #  Run the Pandoc conversion to markup
+    #
+    my $text;
+    { 
+        my $command_ar=
+            $PANDOC_CMD_MD2TEXT_CR->($PANDOC_EXE, '-');
+        use Data::Dumper;
+        print Dumper($command_ar);
+        run3($command_ar, $markdown_sr, $fn || \$text, \undef) ||
+            return err('unable to run3 %s', Dumper($command_ar));
+        if ((my $err=$?) >> 8) {
+            return err("error $err on run3 of: %s", Dumper($command_ar));
+        }
+    }
+    
+    #  Done
+    #
+    return \$text;
+    
+}
+
+
+sub md2pod {
+
+
+    #  Convert Markdown to POD
+    #
+    my ($self, $markdown_sr)=@_;
+    
+    
+    my $m2p_or=Markdown::Pod->new() ||
+        return err('unable to create new Markdown::Pod object');
+    my $pod = $m2p_or->markdown_to_pod(
+            dialect  => $MARKDOWN_DIALECT,
+            markdown => ${$markdown_sr},
+    ) || return err('unable to created pod from markdown');
+
+
+    #  Done
+    #
+    return \$pod;
+    
+}
+
+
+sub pod2text {
+
+
+    #  Convert POD to text
+    #
+    my ($self, $pod_sr)=@_;
+    require Pod::Text;
+    # Initialize and run the formatter.
+    my $parser_or=Pod::Text->new();
+    $parser_or->parse_string_document(${$pod_sr});
+    my $text=$parser_or->output_string;
+    return \$text;
+    
+}
+    
 
 sub pod_replace {
 
