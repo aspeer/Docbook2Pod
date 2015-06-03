@@ -31,8 +31,6 @@ sub BEGIN {local $^W=0}
 use Docbook2Pod::Util;
 use Docbook2Pod::Constant;
 use Data::Dumper;
-use File::Temp;
-use File::Find;
 use Cwd;
 use IPC::Run3;
 use Markdown::Pod;
@@ -159,8 +157,6 @@ sub md2text {
     my $text;
     {   my $command_ar=
             $PANDOC_CMD_MD2TEXT_CR->($PANDOC_EXE, '-');
-        use Data::Dumper;
-        print Dumper($command_ar);
         run3($command_ar, $markdown_sr, $fn || \$text, \undef) ||
             return err ('unable to run3 %s', Dumper($command_ar));
         if ((my $err=$?) >> 8) {
