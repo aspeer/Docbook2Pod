@@ -49,15 +49,6 @@ my $local_fn="${module_fn}.local";
 (my $module_dn=$module_fn)=~s/\.pm$//;
 
 
-sub fn {
-
-    File::Spec->catfile($module_dn, @_)
-
-}
-
-
-#  Find file in path
-#
 sub bin_find {
 
 
@@ -96,6 +87,14 @@ sub bin_find {
 }
 
 
+#  Find file in path
+#
+sub fn {
+
+    File::Spec->catfile($module_dn, @_)
+
+}
+
 
 #  Find style sheets
 #
@@ -112,7 +111,7 @@ sub fn_stylesheet_find {
     };
     find($wanted_cr, @dn);
     return $fn;
-    
+
 }
 
 
@@ -120,31 +119,35 @@ sub fn_stylesheet_find {
 #  <<<
 %Constant=(
 
-    PANDOC_EXE          => &bin_find(qw(pandoc pandoc.exe)),
+    PANDOC_EXE => &bin_find(qw(pandoc pandoc.exe)),
 
-    PANDOC_CMD_DOCBOOK2MD_CR       => sub {return [
-        shift(),                        # PANDOC_EXE
-        '-fdocbook',                    # from docbook
-        '-tmarkdown_github',            # to markdown (github dialect)
-        shift(),                        # File name
-    ]},
-        
-    PANDOC_CMD_MD2TEXT_CR       => sub {return [
-        shift(),                        # PANDOC_EXE
-        '-fmarkdown_github',            # from markdown (github dialect)
-        '-tplain',                      # to plaintext
-        shift(),                        # File name
-    ]},
+    PANDOC_CMD_DOCBOOK2MD_CR => sub {
+        return [
+            shift(),                # PANDOC_EXE
+            '-fdocbook',            # from docbook
+            '-tmarkdown_github',    # to markdown (github dialect)
+            shift(),                # File name
+            ]
+    },
+
+    PANDOC_CMD_MD2TEXT_CR => sub {
+        return [
+            shift(),                # PANDOC_EXE
+            '-fmarkdown_github',    # from markdown (github dialect)
+            '-tplain',              # to plaintext
+            shift(),                # File name
+            ]
+    },
 
 
-    OPT_XMLSUFFIX       => '.xml',
-    OPT_PODSUFFIX       => '.pod', 
-    OPT_MDSUFFIX        => '.md', 
-    
-    
+    OPT_XMLSUFFIX => '.xml',
+    OPT_PODSUFFIX => '.pod',
+    OPT_MDSUFFIX  => '.md',
+
+
     #  Dialect one of Standard, Github, Theory
     #
-    MARKDOWN_DIALECT    => 'Theory',
+    MARKDOWN_DIALECT => 'Theory',
 
 
     #  Local constants override anything above
@@ -152,6 +155,7 @@ sub fn_stylesheet_find {
     %{do($local_fn)}
 
 );
+
 #  >>>
 
 

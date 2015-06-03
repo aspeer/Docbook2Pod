@@ -36,7 +36,7 @@ use File::Find;
 use Cwd;
 use IPC::Run3;
 use Markdown::Pod;
- 
+
 
 #  Data Dumper formatting
 #
@@ -58,100 +58,68 @@ $VERSION='0.004';
 #===================================================================================================
 
 
-sub docbook2pod_xml {
-
-
-    #  Convert XML files to POD
-    #
-    my ($self, $xml_sr)=@_;
-    
-    
-    #  Run the Pandoc conversion to markup
-    #
-    my $markdown;
-    { 
-        my $command_ar=
-            $PANDOC_CMD_DOCBOOK2MD_CR->($PANDOC_EXE, '-');
-        run3($command_ar, $xml_sr, \$markdown, \undef) ||
-            return err('unable to run3 %s', Dumper($command_ar));
-        if ((my $err=$?) >> 8) {
-            return err("error $err on run3 of: %s", Dumper($command_ar));
-        }
-    }
-    
-    
-    #  Now run through Markdown::Pod
-    #
-    my $m2p_or=Markdown::Pod->new() ||
-        return err('unable to create new Markdown::Pod object');
-    my $pod = $m2p_or->markdown_to_pod(
-            dialect  => $MARKDOWN_DIALECT,
-            markdown => $markdown,
-    ) || return err('unable to created pod from markdown');
-
-
-    #  Done
-    #
-    return \$pod;
-    
-}
-
-
 sub docbook2md {
 
 
     #  Convert XML files to Markdown
     #
     my ($self, $xml_sr, $fn)=@_;
-    
-    
+
+
     #  Run the Pandoc conversion to markup
     #
     my $markdown;
-    { 
-        my $command_ar=
+    {   my $command_ar=
             $PANDOC_CMD_DOCBOOK2MD_CR->($PANDOC_EXE, '-');
         run3($command_ar, $xml_sr, $fn || \$markdown, \undef) ||
-            return err('unable to run3 %s', Dumper($command_ar));
+            return err ('unable to run3 %s', Dumper($command_ar));
         if ((my $err=$?) >> 8) {
-            return err("error $err on run3 of: %s", Dumper($command_ar));
+            return err ("error $err on run3 of: %s", Dumper($command_ar));
         }
     }
-    
+
     #  Done
     #
     return \$markdown;
-    
+
 }
 
 
-sub md2text {
+sub docbook2pod_xml {
 
 
-    #  Convert XML files to Markdown
+    #  Convert XML files to POD
     #
-    my ($self, $markdown_sr, $fn)=@_;
-    
-    
+    my ($self, $xml_sr)=@_;
+
+
     #  Run the Pandoc conversion to markup
     #
-    my $text;
-    { 
-        my $command_ar=
-            $PANDOC_CMD_MD2TEXT_CR->($PANDOC_EXE, '-');
-        use Data::Dumper;
-        print Dumper($command_ar);
-        run3($command_ar, $markdown_sr, $fn || \$text, \undef) ||
-            return err('unable to run3 %s', Dumper($command_ar));
+    my $markdown;
+    {   my $command_ar=
+            $PANDOC_CMD_DOCBOOK2MD_CR->($PANDOC_EXE, '-');
+        run3($command_ar, $xml_sr, \$markdown, \undef) ||
+            return err ('unable to run3 %s', Dumper($command_ar));
         if ((my $err=$?) >> 8) {
-            return err("error $err on run3 of: %s", Dumper($command_ar));
+            return err ("error $err on run3 of: %s", Dumper($command_ar));
         }
     }
-    
+
+
+    #  Now run through Markdown::Pod
+    #
+    my $m2p_or=Markdown::Pod->new() ||
+        return err ('unable to create new Markdown::Pod object');
+    my $pod=$m2p_or->markdown_to_pod(
+        dialect  => $MARKDOWN_DIALECT,
+        markdown => $markdown,
+    ) || return err ('unable to created pod from markdown');
+
+
     #  Done
     #
-    return \$text;
-    
+    return \$pod;
+
 }
 
 
@@ -161,20 +129,49 @@ sub md2pod {
     #  Convert Markdown to POD
     #
     my ($self, $markdown_sr)=@_;
-    
-    
+
+
     my $m2p_or=Markdown::Pod->new() ||
-        return err('unable to create new Markdown::Pod object');
-    my $pod = $m2p_or->markdown_to_pod(
-            dialect  => $MARKDOWN_DIALECT,
-            markdown => ${$markdown_sr},
-    ) || return err('unable to created pod from markdown');
+        return err ('unable to create new Markdown::Pod object');
+    my $pod=$m2p_or->markdown_to_pod(
+        dialect  => $MARKDOWN_DIALECT,
+        markdown => ${$markdown_sr},
+    ) || return err ('unable to created pod from markdown');
 
 
     #  Done
     #
     return \$pod;
-    
+
+}
+
+
+sub md2text {
+
+
+    #  Convert XML files to Markdown
+    #
+    my ($self, $markdown_sr, $fn)=@_;
+
+
+    #  Run the Pandoc conversion to markup
+    #
+    my $text;
+    {   my $command_ar=
+            $PANDOC_CMD_MD2TEXT_CR->($PANDOC_EXE, '-');
+        use Data::Dumper;
+        print Dumper($command_ar);
+        run3($command_ar, $markdown_sr, $fn || \$text, \undef) ||
+            return err ('unable to run3 %s', Dumper($command_ar));
+        if ((my $err=$?) >> 8) {
+            return err ("error $err on run3 of: %s", Dumper($command_ar));
+        }
+    }
+
+    #  Done
+    #
+    return \$text;
+
 }
 
 
@@ -185,36 +182,37 @@ sub pod2text {
     #
     my ($self, $pod_sr)=@_;
     require Pod::Text;
+
     # Initialize and run the formatter.
     my $parser_or=Pod::Text->new();
     $parser_or->parse_string_document(${$pod_sr});
     my $text=$parser_or->output_string;
     return \$text;
-    
+
 }
-    
+
 
 sub pod_replace {
 
-    
+
     #  Find and replace POD in a file
     #
     my ($self, $fn, $pod_sr)=@_;
-    
-    
+
+
     #  Try to load PPI
     #
     eval {
         require PPI;
         1;
-    } || return err('unable to load PPI module - is it installed ?');
+    } || return err ('unable to load PPI module - is it installed ?');
 
 
     #  Create new PPI documents from supplied file and new POD
     #
     my $ppi_doc_or=PPI::Document->new($fn);
     my $ppi_pod_or=PPI::Document->new($pod_sr);
-    
+
 
     #  Prune existing POD
     #
@@ -222,22 +220,23 @@ sub pod_replace {
     if (my $ppi_doc_end_or=$ppi_doc_or->find_first('PPI::Statement::End')) {
         $ppi_doc_end_or->prune('PPI::Token::Comment');
         $ppi_doc_end_or->prune('PPI::Token::Whitespace');
-    }else {
+    }
+    else {
         $ppi_doc_or->add_element(PPI::Token::Separator->new("__END__\n\n"));
         $ppi_doc_or->add_element(PPI::Token::Whitespace->new("\n"));
     }
-    
-    
+
+
     #  Append new POD
     #
     $ppi_doc_or->add_element($ppi_pod_or);
-    
-    
+
+
     #  Save
     #
     return $ppi_doc_or->save($fn);
-    
-} 
+
+}
 
 __END__
 =head1 Docbook2Pod
