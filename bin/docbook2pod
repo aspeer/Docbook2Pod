@@ -29,6 +29,7 @@ use Docbook2Pod::Constant;
 use Getopt::Long;
 use Pod::Usage;
 use FindBin qw($RealBin $Script);
+use File::Find;
 use Cwd qw(cwd);
 
 
@@ -86,7 +87,7 @@ sub getopt {
         'podsuffix|p=s',
         'merge',
     ) || pod2usage(2);
-    pod2usage(-verbose => 99, -sections => 'B<Synopsis>|B<Options>', -exitval => 1) if $opt{'help'};
+    pod2usage(-verbose => 99, -sections => 'Synopsis|Options', -exitval => 1) if $opt{'help'};
     pod2usage(-verbose => 2) if $opt{'man'};
     $opt{'version'} && do {
         print "$Script version: $VERSION\n";
@@ -101,17 +102,6 @@ sub getopt {
     }
 
 
-    #  Update Constants if needed
-    #
-    foreach my $constant (qw(
-        xsltproc_exe
-        xlstproc_xsl
-        groff_exe
-        rman_exe
-        )
-        ) {
-        ${uc($constant)}=$opt{$constant} if defined $opt{$constant};
-    }
     foreach my $constant (qw(
         xmlsuffx
         podsuffix
@@ -131,7 +121,6 @@ sub getopt {
             return if $fn=~/\/\._/;    #  Mac temp file
             push @fn, $fn if ($fn=~/\Q$opt{'xmlsuffix'}\E$/);
         };
-        use File::Find;
         find($wanted_cr, $dn);
         @fn ||
             return err ("no files with '%s' suffix found when recursing directory '$dn'", $opt{'xmlsuffix'});
@@ -178,7 +167,7 @@ sub main {
 
         #  Extract POD from docbook
         #
-        my $pod_sr=Docbook2Pod->docbook2pod_xml(\$xml);
+        my $pod_sr=Docbook2Pod->docbook2pod(\$xml);
 
 
         #  Where are we going to put it
