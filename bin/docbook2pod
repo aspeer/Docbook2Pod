@@ -40,7 +40,7 @@ use Data::Dumper;
 
 #  Version Info, must be all one line for MakeMaker, CPAN.
 #
-$VERSION='0.006';
+$VERSION='0.007';
 
 
 #  Run main routine
