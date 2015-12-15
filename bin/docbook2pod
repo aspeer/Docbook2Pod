@@ -85,6 +85,7 @@ sub getopt {
         'recursedir|d=s',
         'xmlsuffix|x=s',
         'podsuffix|p=s',
+        'markdown|md',
         'merge',
     ) || pod2usage(2);
     pod2usage(-verbose => 99, -sections => 'Synopsis|Options', -exitval => 1) if $opt{'help'};
@@ -167,8 +168,7 @@ sub main {
 
         #  Extract POD from docbook
         #
-        my $pod_sr=Docbook2Pod->docbook2pod(\$xml);
-
+        my $sr=$opt_hr->{'markdown'} ? Docbook2Pod->docbook2md(\$xml) : Docbook2Pod->docbook2pod(\$xml);
 
         #  Where are we going to put it
         #
@@ -200,7 +200,7 @@ sub main {
             #
             my $out_fh=IO::File->new($out_fn, O_WRONLY | O_TRUNC | O_CREAT) ||
                 return err ("unable to open output file '$out_fn' for write, $!");
-            print $out_fh ${$pod_sr};
+            print $out_fh ${$sr};
             $out_fh->close()
         }
         elsif ($opt_hr->{'merge'}) {
@@ -215,14 +215,14 @@ sub main {
             unless (-f $out_fn) {
                 return err ("can't merge into file '$out_fn', file does not exist");
             }
-            Docbook2Pod->pod_replace($out_fn, $pod_sr);
+            Docbook2Pod->pod_replace($out_fn, $sr);
         }
         else {
 
 
             #   None the above. Send to stdout
             #
-            print ${$pod_sr};
+            print ${$sr};
 
         }
     }
@@ -329,8 +329,9 @@ This file is part of Docbook2Pod.
 
 This software is copyright (c) 2015 by Andrew Speer <andrew.speer@isolutions.com.au>.
 
-This is free software; you can redistribute it and/or modify it underthe same terms as the Perl 5 programming language system itself.
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 Full license text is available at:
+L<http://dev.perl.org/licenses/>
 
-<http://dev.perl.org/licenses/>

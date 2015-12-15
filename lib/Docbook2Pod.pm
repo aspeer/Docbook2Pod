@@ -162,7 +162,15 @@ sub pod2text {
     #  Convert POD to text
     #
     my ($self, $pod_sr)=@_;
-    require Pod::Text;
+
+
+    #  Try to load Pod::Text
+    #
+    eval {
+        require Pod::Text;
+        1;
+    } || return err ("unable to load Pod::Text module, $@");
+
 
     # Initialize and run the formatter.
     my $parser_or=Pod::Text->new();
@@ -186,7 +194,7 @@ sub pod_replace {
     eval {
         require PPI;
         1;
-    } || return err ('unable to load PPI module - is it installed ?');
+    } || return err ("unable to load PPI module, $@");
 
 
     #  Create new PPI documents from supplied file and new POD
@@ -218,6 +226,7 @@ sub pod_replace {
     return $ppi_doc_or->save($fn);
 
 }
+
 
 __END__
 =head1 Docbook2Pod
@@ -263,8 +272,9 @@ This file is part of Docbook2Pod.
 
 This software is copyright (c) 2015 by Andrew Speer <andrew.speer@isolutions.com.au>.
 
-This is free software; you can redistribute it and/or modify it underthe same terms as the Perl 5 programming language system itself.
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 Full license text is available at:
+L<http://dev.perl.org/licenses/>
 
-<http://dev.perl.org/licenses/>
