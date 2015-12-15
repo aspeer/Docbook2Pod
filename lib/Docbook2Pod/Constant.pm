@@ -16,7 +16,7 @@ package Docbook2Pod::Constant;
 #  Compiler Pragma
 #
 use strict qw(vars);
-use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT_OK @EXPORT %Constant);
+use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT_OK @EXPORT %Constant);  ## no critic
 use warnings;
 no warnings qw(uninitialized);
 local $^W=0;
@@ -91,7 +91,7 @@ sub bin_find {
 #
 sub fn {
 
-    File::Spec->catfile($module_dn, @_)
+    return File::Spec->catfile($module_dn, @_)
 
 }
 
@@ -168,4 +168,4 @@ foreach (keys %Constant) {${$_}=$ENV{$_} ? $Constant{$_}=$ENV{$_} : $Constant{$_
 @EXPORT_OK=@EXPORT;
 %EXPORT_TAGS=(all => [@EXPORT_OK]);
 $_=\%Constant;
-
+1;

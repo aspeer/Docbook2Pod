@@ -48,11 +48,6 @@ $Data::Dumper::Terse=1;
 $VERSION='0.006';
 
 
-#  All done, init finished
-#
-1;
-
-
 #===================================================================================================
 
 
@@ -94,9 +89,9 @@ sub docbook2pod {
     #  Run the Pandoc conversion to markup
     #
     my $md_sr=$self->docbook2md($xml_sr) ||
-        return err();
+        return err ();
     my $pod_sr=$self->md2pod($md_sr) ||
-        return err();
+        return err ();
 
 
     #  Done
@@ -227,7 +222,7 @@ sub pod_replace {
 
 }
 
-
+1;
 __END__
 =head1 Docbook2Pod
 

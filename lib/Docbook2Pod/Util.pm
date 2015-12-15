@@ -14,10 +14,9 @@ package Docbook2Pod::Util;
 
 
 use strict;
-use vars qw($VERSION @ISA @EXPORT);
+use vars qw($VERSION @ISA @EXPORT);  ## no critic
 use warnings;
 no warnings qw(uninitialized);
-sub BEGIN {local $^W=0}
 
 
 #  External modules
@@ -37,10 +36,6 @@ use Carp;
 #
 $VERSION='0.006';
 
-
-#  Done
-#
-1;
 
 #==================================================================================================
 
@@ -66,7 +61,7 @@ sub err {
     #  Quit on errors
     #
     my $msg=shift();
-    croak &fmt("*error*\n\n" . ucfirst($msg), @_);
+    return croak &fmt("*error*\n\n" . ucfirst($msg), @_);
 
 }
 
@@ -93,7 +88,9 @@ sub msg {
 
     #  Print message
     #
-    CORE::print &fmt(@_), "\n";
+    return CORE::print &fmt(@_), "\n";
 
 }
+
+1;
 
